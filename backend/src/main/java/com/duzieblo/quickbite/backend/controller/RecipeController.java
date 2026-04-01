@@ -1,7 +1,6 @@
 package com.duzieblo.quickbite.backend.controller;
 
 import com.duzieblo.quickbite.backend.model.RecipeRequest;
-import com.duzieblo.quickbite.backend.model.RecipeResponse;
 import com.duzieblo.quickbite.backend.service.OpenAiService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +20,8 @@ public class RecipeController {
         this.openAiService = openAiService;
     }
 
-    @PostMapping("/recipes/suggest")
-    public RecipeResponse suggestRecipes(@RequestBody RecipeRequest request) {
+    @PostMapping(value = "/recipes/suggest", produces = "text/plain;charset=UTF-8")
+    public String suggestRecipes(@RequestBody RecipeRequest request) {
         if (request == null || request.ingredients() == null || request.ingredients().isEmpty()) {
             throw new IllegalArgumentException("Lista skladnikow nie moze byc pusta");
         }

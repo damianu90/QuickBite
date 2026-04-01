@@ -6,11 +6,11 @@ Backend aplikacji QuickBite zgodny z zalozeniami z `AGENTS.md`.
 
 - endpoint `POST /api/recipes/suggest`
 - endpoint `GET /api/health`
-- reczne rekordy modelu (`record`): `RecipeRequest`, `Recipe`, `RecipeResponse`
+- reczny rekord modelu (`record`): `RecipeRequest`
 - reczna walidacja requestu w kontrolerze
 - globalna obsluga bledow przez `@RestControllerAdvice`
 - konfiguracja CORS oparta o `FRONTEND_ORIGIN`
-- integracja z OpenAI przez Spring AI (`ChatClient`) i parsowanie JSON przez Jackson (`ObjectMapper`)
+- integracja z OpenAI przez Spring AI (`ChatClient`) i odpowiedz tekstowa
 
 ## Wymagania
 
@@ -32,6 +32,6 @@ Invoke-RestMethod -Method Get -Uri "http://localhost:8080/api/health"
 
 ```powershell
 $body = @{ ingredients = @("jajka", "ser", "pomidory", "cebula") } | ConvertTo-Json
-Invoke-RestMethod -Method Post -Uri "http://localhost:8080/api/recipes/suggest" -ContentType "application/json" -Body $body
+Invoke-WebRequest -Method Post -Uri "http://localhost:8080/api/recipes/suggest" -ContentType "application/json" -Body $body | Select-Object -ExpandProperty Content
 ```
 

@@ -8,7 +8,7 @@ Plik instruktażowy dla agentów AI pracujących z projektem **QuickBite** – a
 
 ### Backend
 - **Java 21**
-- **Spring Boot 3.x**
+- **Spring Boot 4.x**
 - **Maven** – zarządzanie zależnościami
 - **Spring AI 1.x** – integracja z OpenAI API
 
