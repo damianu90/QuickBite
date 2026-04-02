@@ -1,0 +1,53 @@
+:root {
+  --qb-bg: #f6f3ee;
+  --qb-surface: #ffffff;
+  --qb-text: #1f1a16;
+  --qb-text-muted: #5c534c;
+  --qb-text-soft: #8a7f74;
+  --qb-border: #e6dfd4;
+  --qb-input-bg: #fdfcfa;
+  --qb-placeholder: #a3988c;
+  --qb-accent: #c45c26;
+  --qb-accent-dark: #a34a1d;
+  --qb-accent-ring: rgba(196, 92, 38, 0.25);
+  --qb-card-head: #faf7f2;
+  --qb-badge: rgba(196, 92, 38, 0.12);
+  --qb-badge-text: #8a3d18;
+  --qb-badge-muted: #ede8e0;
+  --qb-error-bg: #fdeff0;
+  --qb-error-border: #f0c4c8;
+  --qb-error-text: #7a2230;
+  --qb-shadow-sm: 0 1px 2px rgba(31, 26, 22, 0.06);
+  --qb-shadow-md: 0 6px 20px rgba(31, 26, 22, 0.1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-family:
+    'Source Sans 3',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    Ubuntu,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--qb-text);
+  background: var(--qb-bg);
+  background-image:
+    radial-gradient(ellipse 120% 80% at 0% 0%, rgba(196, 92, 38, 0.08), transparent 55%),
+    radial-gradient(ellipse 100% 60% at 100% 10%, rgba(139, 90, 43, 0.06), transparent 50%);
+  min-height: 100vh;
+}

@@ -1,0 +1,5 @@
+# Skopiuj ten plik jako application-local.properties (jest w .gitignore).
+# Uruchom backend z profilem Lokalnie, np.:
+#   .\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=local
+# lub w IDE: Active profiles = local
+spring.ai.openai.api-key=

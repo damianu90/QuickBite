@@ -1,0 +1,71 @@
+<div class="app">
+  <header class="app__header">
+    <h1 class="app__title">{{ title }}</h1>
+    <p class="app__subtitle">
+      Wpisz składniki, które masz pod ręką — zaproponujemy trzy przepisy dopasowane do nich.
+    </p>
+  </header>
+
+  <section class="panel" aria-labelledby="ingredients-heading">
+    <h2 id="ingredients-heading" class="panel__title">Składniki</h2>
+    <label class="sr-only" for="ingredients">Lista składników</label>
+    <textarea
+      id="ingredients"
+      class="panel__textarea"
+      name="ingredients"
+      rows="5"
+      [(ngModel)]="ingredientsText"
+      placeholder="np. jajka, ser, pomidory, cebula"
+      [disabled]="loading()"
+    ></textarea>
+    <button
+      type="button"
+      class="panel__submit"
+      (click)="submit()"
+      [disabled]="loading()"
+    >
+      @if (loading()) {
+        Generuję przepisy…
+      } @else {
+        Sugeruj przepisy
+      }
+    </button>
+  </section>
+
+  @if (error(); as errMsg) {
+    <div class="alert alert--error" role="alert">{{ errMsg }}</div>
+  }
+
+  @if (recipes(); as list) {
+    <section class="results" aria-label="Propozycje przepisów">
+      <h2 class="results__heading">Propozycje</h2>
+      <div class="results__grid">
+        @for (recipe of list; track recipe.name) {
+          <article class="card">
+            <header class="card__header">
+              <h3 class="card__title">{{ recipe.name }}</h3>
+              <div class="card__meta">
+                <span class="card__badge">{{ recipe.time }}</span>
+                <span class="card__badge card__badge--muted">{{ recipe.difficulty }}</span>
+              </div>
+            </header>
+            <div class="card__body">
+              <h4 class="card__section-title">Składniki</h4>
+              <ul class="card__list">
+                @for (item of recipe.ingredients; track item) {
+                  <li>{{ item }}</li>
+                }
+              </ul>
+              <h4 class="card__section-title">Kroki</h4>
+              <ol class="card__steps">
+                @for (step of recipe.steps; track $index) {
+                  <li>{{ step }}</li>
+                }
+              </ol>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+  }
+</div>

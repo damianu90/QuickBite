@@ -1,4 +1,6 @@
 HELP.md
+# Klucze API — utwórz z application-local.properties.example
+**/application-local.properties
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

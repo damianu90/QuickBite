@@ -1,0 +1,235 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+.app__header {
+  margin-bottom: 2rem;
+}
+
+.app__title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--qb-text);
+}
+
+.app__subtitle {
+  margin: 0;
+  max-width: 36rem;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--qb-text-muted);
+}
+
+.panel {
+  background: var(--qb-surface);
+  border: 1px solid var(--qb-border);
+  border-radius: 12px;
+  padding: 1.25rem 1.35rem 1.35rem;
+  box-shadow: var(--qb-shadow-sm);
+  margin-bottom: 1.5rem;
+}
+
+.panel__title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--qb-text);
+}
+
+.panel__textarea {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+  padding: 0.75rem 0.85rem;
+  font: inherit;
+  line-height: 1.45;
+  color: var(--qb-text);
+  background: var(--qb-input-bg);
+  border: 1px solid var(--qb-border);
+  border-radius: 8px;
+  resize: vertical;
+  min-height: 6.5rem;
+
+  &:focus {
+    outline: none;
+    border-color: var(--qb-accent);
+    box-shadow: 0 0 0 3px var(--qb-accent-ring);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  &::placeholder {
+    color: var(--qb-placeholder);
+  }
+}
+
+.panel__submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.35rem;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--qb-accent) 0%, var(--qb-accent-dark) 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: var(--qb-shadow-sm);
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    opacity 0.12s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--qb-shadow-md);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+  }
+}
+
+.alert {
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.alert--error {
+  background: var(--qb-error-bg);
+  border: 1px solid var(--qb-error-border);
+  color: var(--qb-error-text);
+}
+
+.results__heading {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--qb-text);
+}
+
+.results__grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1fr;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card {
+  background: var(--qb-surface);
+  border: 1px solid var(--qb-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--qb-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.card__header {
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid var(--qb-border);
+  background: linear-gradient(180deg, var(--qb-card-head) 0%, var(--qb-surface) 100%);
+}
+
+.card__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--qb-text);
+}
+
+.card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.card__badge {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 999px;
+  background: var(--qb-badge);
+  color: var(--qb-badge-text);
+}
+
+.card__badge--muted {
+  background: var(--qb-badge-muted);
+  color: var(--qb-text-muted);
+  font-weight: 500;
+}
+
+.card__body {
+  padding: 1rem 1.1rem 1.15rem;
+  flex: 1;
+}
+
+.card__section-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--qb-text-soft);
+}
+
+.card__list,
+.card__steps {
+  margin: 0 0 1rem;
+  padding-left: 1.1rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--qb-text);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.card__steps li {
+  margin-bottom: 0.35rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
