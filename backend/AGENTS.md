@@ -11,6 +11,7 @@ Plik instruktażowy dla agentów AI pracujących z projektem **QuickBite** – a
 - **Spring Boot 4.0.5**
 - **Maven** – zarządzanie zależnościami
 - **Spring AI 2.0.0-M4** – integracja z OpenAI API (`spring-ai-starter-model-openai`)
+- **Jackson** – ręczne parsowanie odpowiedzi JSON z OpenAI
 
 ---
 
@@ -31,9 +32,9 @@ Plik instruktażowy dla agentów AI pracujących z projektem **QuickBite** – a
 
 - Frontend komunikuje się z backendem przez REST API.
 - Backend buduje prompt i wywołuje OpenAI API przez `ChatClient` (Spring AI).
-- OpenAI API zwraca 3 propozycje przepisów jako czysty tekst.
-- Backend zwraca tekst bez parsowania strukturalnego JSON.
-- Frontend wyświetla odpowiedź jako treść tekstową.
+- OpenAI API zwraca 3 propozycje przepisów w formacie JSON.
+- Backend parsuje odpowiedź ręcznie za pomocą `ObjectMapper` (Jackson).
+- Frontend wyświetla przepisy w postaci kart.
 
 ---
 
@@ -49,9 +50,11 @@ backend/
     │   ├── RecipeController.java         # Endpoint /api/recipes/suggest i /api/health
     │   └── GlobalExceptionHandler.java  # Globalny handler błędów (@RestControllerAdvice)
     ├── service/
-    │   └── OpenAiService.java           # Logika promptu i pobrania odpowiedzi tekstowej
+    │   └── OpenAiService.java           # Logika promptu i parsowania odpowiedzi
     └── model/
-        └── RecipeRequest.java           # Record: { List<String> ingredients }
+        ├── RecipeRequest.java           # Record: { List<String> ingredients }
+        ├── RecipeResponse.java          # Record: { List<Recipe> recipes }
+        └── Recipe.java                  # Record: { name, time, difficulty, ingredients, steps }
 ```
 
 ---
@@ -61,7 +64,7 @@ backend/
 | Warstwa | Decyzja |
 |---|---|
 | Komunikacja z OpenAI | `ChatClient` (fluent API, Spring AI) |
-| Format odpowiedzi AI | Czysty tekst (bez JSON) |
+| Parsowanie odpowiedzi | Ręcznie – `ObjectMapper` (Jackson) |
 | Modele danych | `record` (Java 21) |
 | Walidacja requestu | Ręcznie w kontrolerze (`if/throw`) |
 | Obsługa błędów | `@RestControllerAdvice` – centralne miejsce |
@@ -84,18 +87,23 @@ Content-Type: application/json
 
 ### Response – Backend → Frontend
 
-```text
-Przepis 1: Omlet z pomidorami i serem
-Czas: 15 min
-Trudnosc: latwy
-Skladniki: 3 jajka, 1 pomidor, 50 g sera, sol, pieprz
-Kroki:
-1. Rozbij jajka i roztrzep.
-2. Pokroj pomidora, zetrzyj ser.
-3. Rozgrzej patelnie i usmaz omlet.
-
-Przepis 2: ...
-Przepis 3: ...
+```json
+{
+  "recipes": [
+    {
+      "name": "Omlet z pomidorami i serem",
+      "time": "15 min",
+      "difficulty": "łatwy",
+      "ingredients": ["3 jajka", "1 pomidor", "50g sera żółtego", "sól, pieprz"],
+      "steps": [
+        "Rozbij jajka do miski i roztrzep widelcem.",
+        "Pokrój pomidora w kostkę, zetrzyj ser.",
+        "Rozgrzej patelnię, wlej jajka.",
+        "Dodaj pomidory i ser, złóż omlet na pół."
+      ]
+    }
+  ]
+}
 ```
 
 ### Rekordy Java
@@ -103,6 +111,18 @@ Przepis 3: ...
 ```java
 // RecipeRequest.java
 public record RecipeRequest(List<String> ingredients) {}
+
+// Recipe.java
+public record Recipe(
+    String name,
+    String time,
+    String difficulty,
+    List<String> ingredients,
+    List<String> steps
+) {}
+
+// RecipeResponse.java
+public record RecipeResponse(List<Recipe> recipes) {}
 ```
 
 ---
@@ -111,18 +131,18 @@ public record RecipeRequest(List<String> ingredients) {}
 
 | Metoda | Endpoint | Opis |
 |--------|---|---|
-| POST | `/api/recipes/suggest` | Przyjmuje składniki, zwraca tekst z 3 propozycjami przepisów |
+| POST | `/api/recipes/suggest` | Przyjmuje składniki, zwraca 3 propozycje przepisów |
 | GET | `/api/health` | Health check backendu |
 
 ### Szczegóły endpointu `/api/recipes/suggest`
 
 - **Request body**: `{ "ingredients": ["string"] }`
-- **Response**: `text/plain` – opis 3 przepisow w czystym tekscie
+- **Response**: `{ "recipes": [Recipe] }` – zawsze dokładnie 3 przepisy
 - **Walidacja**: kontroler sprawdza ręcznie czy `ingredients` nie jest `null` ani pusta lista
 - **Kody odpowiedzi**:
   - `200 OK` – przepisy wygenerowane poprawnie
   - `400 Bad Request` – brak składników lub pusta lista
-  - `502 Bad Gateway` – błąd odpowiedzi z OpenAI
+  - `502 Bad Gateway` – błąd parsowania odpowiedzi z OpenAI
 
 ---
 
@@ -133,7 +153,7 @@ Globalny handler w `GlobalExceptionHandler.java` (`@RestControllerAdvice`):
 | Wyjątek | HTTP Status | Kiedy |
 |---|---|---|
 | `IllegalArgumentException` | `400 Bad Request` | Pusta lista składników |
-| `RuntimeException` | `502 Bad Gateway` | Błąd odpowiedzi OpenAI |
+| `RuntimeException` | `502 Bad Gateway` | Błąd parsowania odpowiedzi OpenAI |
 
 Format odpowiedzi błędu:
 ```json
@@ -209,7 +229,7 @@ export OPENAI_API_KEY=sk-...
 - Po każdej zmianie kontraktu API zaktualizuj sekcje **Modele danych** i **Endpointy API** w tym pliku.
 - Zawsze przestrzegaj struktury katalogów opisanej w sekcji **Struktura projektu**.
 - Backend musi zwracać dokładnie 3 przepisy – prompt do OpenAI powinien to wymuszać.
-- Prompt ma wymuszać odpowiedz w czystym tekscie (bez JSON i bez markdown).
+- Prompt musi wymuszać odpowiedź w czystym JSON (bez dodatkowego tekstu) – `ObjectMapper` nie toleruje tekstu poza strukturą JSON.
 - Nie przechowuj klucza API w kodzie źródłowym.
 - Walidacja requestu odbywa się ręcznie w kontrolerze – nie używaj Bean Validation (`@Valid`, `@NotEmpty`).
 - Modele danych to rekordy Java (`record`) – nie używaj klas z getterami/setterami ani Lombok.
